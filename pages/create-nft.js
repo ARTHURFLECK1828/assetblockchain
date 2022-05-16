@@ -11,15 +11,7 @@ import placeStorageOrder from '../scripts/placeStorageOrder';
 
 import { css } from '@emotion/css'
 
-const authHeader = crustAuth();
-
-const client = ipfsHttpClient({
-  // url:'https://ipfs.infura.io:5001/api/v0',
-  url: 'https://crustipfs.xyz',
-  headers: {
-    authorization: `Basic ${authHeader}`
-  }
-});
+const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
 
 import {
   marketplaceAddress
@@ -50,11 +42,6 @@ export default function CreateItem() {
       setFileCid(cid);
       const url = `https://ipfs.infura.io/ipfs/${added.path}`
       setFileUrl(url)
-
-      console.log("------------FILESTAT-------------");
-      const fileStat = await client.files.stat("/ipfs/" + added.path);
-      console.log(fileStat);
-      setFileSize(fileStat.cumulativeSize);
     } catch (error) {
       console.log('Error uploading file: ', error)
     }  
@@ -86,8 +73,6 @@ export default function CreateItem() {
       name, description, file: fileUrl, image: coverImageUrl
     })
     try {
-      await crustPinning(fileCid, name);
-      await placeStorageOrder(fileCid, fileSize);
       const added = await client.add(data)
       const url = `https://ipfs.infura.io/ipfs/${added.path}`
       /* after metadata is uploaded to IPFS, return the URL to use it in the transaction */
